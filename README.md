@@ -1,6 +1,6 @@
 # Engineer Development App
 
-Offline-first Progressive Web App (PWA) for relearning software engineering fundamentals via lessons, exercises, and quizzes.
+Offline-first Progressive Web App (PWA) for relearning software engineering fundamentals via lessons, exercises, and quizzes. Initially created entirely with Cursor using an Opus 4.5 agent from a single prompt, as an experiment to test agentic coding capability. Indeed ironic that it was to create an app to teach others to code.
 
 ## Features
 - **PWA**: installable and works offline
