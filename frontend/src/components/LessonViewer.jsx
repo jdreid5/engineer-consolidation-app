@@ -137,6 +137,8 @@ function LessonViewer({ progress, quizResults, onComplete, onQuizSubmit }) {
             <h2>💻 Exercise</h2>
             <p>{lesson.exercise.description}</p>
             <CodeEditor 
+              key={`${lessonProgressId}-exercise`}
+              exerciseId={`${lessonProgressId}-exercise`}
               initialCode={lesson.exercise.starterCode}
               expectedOutput={lesson.exercise.expectedOutput}
               hint={lesson.exercise.hint}

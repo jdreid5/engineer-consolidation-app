@@ -1,12 +1,40 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 
-function CodeEditor({ initialCode, expectedOutput, hint }) {
-  const [code, setCode] = useState(initialCode || '// Write your code here\n');
+function CodeEditor({ exerciseId, initialCode, expectedOutput, hint }) {
+  const storageKey = exerciseId ? `code-editor-${exerciseId}` : null;
+  
+  // Load saved code from localStorage on mount
+  const loadSavedCode = () => {
+    if (!storageKey) return initialCode || '// Write your code here\n';
+    
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        return saved;
+      }
+    } catch (e) {
+      console.error('Failed to load saved code:', e);
+    }
+    return initialCode || '// Write your code here\n';
+  };
+
+  const [code, setCode] = useState(loadSavedCode);
   const [output, setOutput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const editorRef = useRef(null);
+
+  // Save code to localStorage whenever it changes
+  useEffect(() => {
+    if (storageKey && code) {
+      try {
+        localStorage.setItem(storageKey, code);
+      } catch (e) {
+        console.error('Failed to save code:', e);
+      }
+    }
+  }, [code, storageKey]);
 
   const handleEditorDidMount = (editor) => {
     editorRef.current = editor;
@@ -51,8 +79,18 @@ function CodeEditor({ initialCode, expectedOutput, hint }) {
   };
 
   const resetCode = () => {
-    setCode(initialCode || '// Write your code here\n');
+    const resetValue = initialCode || '// Write your code here\n';
+    setCode(resetValue);
     setOutput('');
+    
+    // Clear saved code on reset
+    if (storageKey) {
+      try {
+        localStorage.removeItem(storageKey);
+      } catch (e) {
+        console.error('Failed to clear saved code:', e);
+      }
+    }
   };
 
   const checkResult = () => {
