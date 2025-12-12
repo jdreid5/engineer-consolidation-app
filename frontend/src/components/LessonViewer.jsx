@@ -148,6 +148,7 @@ function LessonViewer({ progress, quizResults, onComplete, onQuizSubmit }) {
           <section className="lesson-quiz">
             <h2>📝 Quiz</h2>
             <Quiz 
+              key={`${lessonProgressId}-quiz`}
               questions={lesson.quiz}
               quizId={`${lessonProgressId}-quiz`}
               previousResult={quizResults[`${lessonProgressId}-quiz`]}

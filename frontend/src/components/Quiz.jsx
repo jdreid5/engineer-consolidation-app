@@ -1,9 +1,46 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function Quiz({ questions, quizId, previousResult, onSubmit }) {
+  const storageKey = `quiz-answers-${quizId}`;
+  
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(null);
+
+  // Load saved answers from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Restore if the number of questions matches
+        if (parsed.answers && Object.keys(parsed.answers).length <= questions.length) {
+          setAnswers(parsed.answers);
+          if (parsed.submitted) {
+            setSubmitted(true);
+            setScore(parsed.score);
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Failed to load saved quiz answers:', e);
+    }
+  }, [storageKey, questions.length]);
+
+  // Save answers to localStorage whenever they change (including after submission)
+  useEffect(() => {
+    if (Object.keys(answers).length > 0) {
+      try {
+        localStorage.setItem(storageKey, JSON.stringify({
+          answers,
+          submitted,
+          score
+        }));
+      } catch (e) {
+        console.error('Failed to save quiz answers:', e);
+      }
+    }
+  }, [answers, submitted, score, storageKey]);
 
   const handleAnswer = (questionIndex, answerIndex) => {
     if (submitted) return;
@@ -24,12 +61,20 @@ function Quiz({ questions, quizId, previousResult, onSubmit }) {
     setScore(correct);
     setSubmitted(true);
     onSubmit(correct, questions.length, answers);
+    // State will be saved to localStorage via useEffect
   };
 
   const handleRetry = () => {
     setAnswers({});
     setSubmitted(false);
     setScore(null);
+    
+    // Clear saved answers on retry
+    try {
+      localStorage.removeItem(storageKey);
+    } catch (e) {
+      console.error('Failed to clear saved quiz answers:', e);
+    }
   };
 
   const allAnswered = Object.keys(answers).length === questions.length;
