@@ -1,0 +1,15 @@
+{
+  "name": "engineer-development-app",
+  "version": "1.0.0",
+  "description": "A comprehensive app to teach software engineering fundamentals",
+  "private": true,
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "preview": "cd frontend && npm run preview",
+    "install:all": "npm install && cd frontend && npm install"
+  },
+  "devDependencies": {}
+}
+
+
